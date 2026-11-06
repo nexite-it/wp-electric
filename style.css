@@ -1,0 +1,14 @@
+/*
+Theme Name: Site Kit Theme
+Theme URI: https://github.com/your-github-user/your-repo
+Description: GitHub-updatable carrier theme. It renders nothing itself — templates, post types, forms and the design system are shipped as the "Site Kit" mu-plugin in site/ and synced to wp-content/mu-plugins/ on activation and on every update. Configure the project in site/site-kit/config.php.
+Author: Your Organization
+Version: 1.0.0
+Requires at least: 6.0
+Requires PHP: 8.0
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: site-kit
+*/
+
+/* No CSS here — the design system lives in site/site-kit/assets/css/main.css. */

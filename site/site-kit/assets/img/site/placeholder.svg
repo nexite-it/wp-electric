@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Placeholder image">
+  <!-- Generic card/thumbnail placeholder, used whenever a post has no
+       featured image. Works for events, news, people and documents. -->
+  <rect width="640" height="480" fill="#e8e8ec"/>
+  <g fill="none" stroke="#4a5464" stroke-opacity=".35" stroke-width="6">
+    <rect x="200" y="160" width="240" height="180" rx="16"/>
+    <circle cx="540" cy="120" r="52"/>
+    <path d="M240 320l50-60 40 40 36-44 74 64" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  <circle cx="320" cy="240" r="150" fill="#ffa600" fill-opacity=".14"/>
+</svg>

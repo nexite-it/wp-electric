@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Placeholder image">
+  <!-- Neutral hero placeholder; replace with a real photo per project. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d4265"/>
+      <stop offset=".65" stop-color="#17415f"/>
+      <stop offset="1" stop-color="#123248"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".35" r=".7">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".14"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#glow)"/>
+  <g fill="none" stroke="#ffffff" stroke-opacity=".22" stroke-width="2">
+    <path d="M0 720c220-60 420-60 640-20s420 40 960-40"/>
+  </g>
+  <g stroke="#ffffff" stroke-opacity=".09" stroke-width="1">
+    <path d="M320 400V900M460 320V900M600 400V900M940 320V900M1080 400V900M1220 320V900"/>
+  </g>
+  <g fill="#ffa600" fill-opacity=".9">
+    <circle cx="1150" cy="300" r="150"/>
+  </g>
+  <text x="80" y="810" font-family="Archivo, system-ui, sans-serif" font-size="42" font-weight="700" fill="#ffffff" fill-opacity=".55">Placeholder image — replace via assets/img/site/</text>
+</svg>

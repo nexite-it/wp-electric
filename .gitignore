@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Editor/OS noise
+*.log
+.idea/
+.vscode/
+
+# Local secrets — never commit
+wp-config-local.php
+wp-config.php
+.env
+
+# Local test artifacts
+wp-content/
+db.sqlite
