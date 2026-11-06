@@ -32,7 +32,7 @@ $level   = in_array($level, ['h1', 'h2', 'h3'], true) ? $level : 'h2';
 
     <?php if (!empty($action['url'])) : ?>
         <a class="sk-btn sk-btn--outline sk-btn--sm" href="<?php echo esc_url((string) $action['url']); ?>">
-            <?php echo esc_html((string) ($action['label'] ?? __('View all', 'site-kit'))); ?>
+            <?php echo esc_html((string) ($action['label'] ?? __('Alle anzeigen', 'site-kit'))); ?>
             <?php Util\icon('arrow-right'); ?>
         </a>
     <?php endif; ?>

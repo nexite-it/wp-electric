@@ -29,7 +29,7 @@ $words = ($size ?? '') === 'large' ? 30 : 18;
         <h3><a href="<?php the_permalink($item); ?>"><?php echo esc_html(get_the_title($item)); ?></a></h3>
         <p><?php echo esc_html(Util\excerpt($item, $words)); ?></p>
         <span class="sk-card__foot">
-            <?php esc_html_e('Read more', 'site-kit'); ?>
+            <?php esc_html_e('Weiterlesen', 'site-kit'); ?>
             <?php Util\icon('chevron-right', ''); ?>
         </span>
     </div>

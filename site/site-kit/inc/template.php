@@ -51,15 +51,38 @@ function page_templates(array $templates): array
 function available(): array
 {
     return [
-        'template-start.php'     => __('Site Kit: Start page', 'site-kit'),
-        'template-about.php'     => __('Site Kit: About', 'site-kit'),
+        'template-start.php'     => __('Site Kit: Startseite', 'site-kit'),
+        'template-services.php'  => __('Site Kit: Leistungen', 'site-kit'),
+        'template-about.php'     => __('Site Kit: Über uns', 'site-kit'),
+        'template-contact.php'   => __('Site Kit: Kontakt', 'site-kit'),
+        'template-imprint.php'   => __('Site Kit: Impressum', 'site-kit'),
+        'template-privacy.php'   => __('Site Kit: Datenschutz', 'site-kit'),
         'template-team.php'      => __('Site Kit: Team', 'site-kit'),
-        'template-contact.php'   => __('Site Kit: Contact', 'site-kit'),
-        'template-imprint.php'   => __('Site Kit: Imprint', 'site-kit'),
-        'template-privacy.php'   => __('Site Kit: Privacy', 'site-kit'),
-        'template-search.php'    => __('Site Kit: Search', 'site-kit'),
+        'template-search.php'    => __('Site Kit: Suche', 'site-kit'),
         'template-404.php'       => __('Site Kit: 404', 'site-kit'),
     ];
+}
+
+/**
+ * Template name of the current request ("start", "services", "contact" …).
+ *
+ * Used for per-page SEO copy and the active navigation state. Returns '' for
+ * views that are not a configured page.
+ */
+function current_key(): string
+{
+    if (is_front_page()) {
+        return 'start';
+    }
+
+    if (is_page()) {
+        $assigned = (string) get_page_template_slug(get_queried_object_id());
+        if (preg_match('#^sk/template-([a-z0-9-]+)\.php$#', $assigned, $m)) {
+            return $m[1];
+        }
+    }
+
+    return '';
 }
 
 /**

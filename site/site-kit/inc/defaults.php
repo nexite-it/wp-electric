@@ -25,6 +25,31 @@ return [
         'person_email'       => 'sk_person_email',
     ],
 
+    /* Local-business blocks. Everything is optional: with these defaults the
+       emergency line, opening hours, partner strip and service-area lists
+       simply do not render. */
+    'emergency' => [
+        'enabled' => false,
+        'phone'   => '',
+        'label'   => 'Notdienst',
+        'note'    => '',
+        'eta'     => '',
+    ],
+    'hours' => [
+        'timezone' => 'Europe/Berlin',
+        'week'     => ['mo' => '', 'tu' => '', 'we' => '', 'th' => '', 'fr' => '', 'sa' => '', 'su' => ''],
+    ],
+    'service_area' => [],
+    'partners'     => [],
+    'legal'        => [
+        'managing_director' => '',
+        'register'          => '',
+        'vat_id'            => '',
+        'profession'        => '',
+        'chamber'           => '',
+        'content_owner'     => '',
+    ],
+
     /* ---------------------------------------------------------------------
      * Content model
      *

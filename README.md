@@ -1,3 +1,62 @@
+# Elektro Wendt — website for an Elektro-Meisterbetrieb in Bonn
+
+This repository is the WordPress Site Kit (documented below) configured as
+the website of a fictional electrician business in Bonn. All names, numbers
+and texts are **placeholders**.
+
+## Pages and the customer journey they serve
+
+| Page | Template | Job |
+|------|----------|-----|
+| Startseite | `template-start.php` | Hero with 24/7 emergency panel, trust bar (qualifications + partner brands), service grid (Wallbox and Smart Home highlighted), "Warum wir" figures, recruiting banner |
+| Leistungen | `template-services.php` | SEO page: one Z-pattern row per service with its own anchor (`#wallbox`, `#photovoltaik`, …), checklist, spec sheet and a call to action that preselects the service in the form; process, FAQ |
+| Über uns | `template-about.php` | Meisterbetrieb intro with team photo, figures, values (Pünktlichkeit, Transparenz, Sicherheit), open positions (`#karriere`) |
+| Kontakt | `template-contact.php` | Inquiry form (topic chips, callback option, consent) next to emergency line, phone/WhatsApp/e-mail, office hours with live open/closed state, service-area map |
+| Impressum, Datenschutz | `template-imprint.php`, `template-privacy.php` | Footer only; German placeholder texts for a craft business |
+
+Site-wide: the emergency number stays visible on every page (sticky
+header on desktop, fixed call bar on phones), and the header never hides.
+
+## Where to change what
+
+- **Business data** (name, phone numbers, emergency line, WhatsApp, opening
+  hours, service area, partner brands, Impressum details, colours):
+  `site/site-kit/config.php`
+- **Texts** (hero, services, FAQ, values, jobs, SEO titles):
+  `site/site-kit/inc/content.php`
+- **Images**: the drawings in `site/site-kit/assets/img/site/service-*.svg`
+  and `team.svg` are placeholders. Replace them with photos (same file
+  names, or change `image` in `content.php`). The team photo can also be set
+  in WordPress as the featured image of the "Über uns" page.
+- **In WordPress**: text written in the editor replaces the placeholder copy
+  on "Über uns", appears above the services on "Leistungen", and replaces
+  Impressum/Datenschutz completely.
+
+## Before going live
+
+1. Replace every placeholder in `config.php`: address, phone numbers,
+   e-mail, WhatsApp number, register and VAT numbers. Set
+   `contact.recipient`; while it is empty, inquiries go to the WordPress
+   admin e-mail.
+2. Replace the placeholder images with real photos. Show partner logos only
+   with the manufacturer's permission (`partners[].logo`).
+3. Have Impressum and Datenschutzerklärung reviewed, and add the hosting
+   and e-mail providers.
+4. Set `updater.repo`, install an SMTP plugin, and set the WordPress site
+   language to Deutsch (the `<html lang>` already follows `seo.locale`).
+
+## Changes made to the kit for this project
+
+- `Config\merge()` now replaces lists (pages, nav, footer links) instead of
+  merging them by index; `false` switches off a default post type.
+- An empty `contact.recipient` falls back to the admin e-mail, not to the
+  public address.
+- Scroll-reveal only hides content when JavaScript runs (`.sk-js`).
+- New: per-page SEO titles/descriptions, `Electrician` structured data,
+  opening hours with live status, two-click OpenStreetMap, German UI.
+
+---
+
 # WordPress Site Kit — a reusable, GitHub-deployed website template
 
 A stripped-down, reusable base for WordPress sites that are **developed in a

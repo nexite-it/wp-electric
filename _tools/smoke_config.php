@@ -40,7 +40,7 @@ class WP_Post_Stub {
 class_alias(WP_Post_Stub::class, 'WP_Post');
 
 function get_page_by_path($slug) {
-    $pages = ['about' => 7, 'team' => 8, 'contact' => 9, 'imprint' => 10, 'privacy' => 11, 'home' => 2];
+    $pages = ['home' => 2, 'leistungen' => 3, 'ueber-uns' => 4, 'kontakt' => 5, 'impressum' => 6, 'datenschutz' => 7];
     return isset($pages[$slug]) ? new WP_Post($pages[$slug]) : null;
 }
 function get_permalink($post) { return 'https://stub.test/' . $post->ID . '/'; }
@@ -100,8 +100,9 @@ check('tagline falls back', SiteKit\Config\tagline() !== '');
 
 // 5) Contact fallbacks
 $contact = SiteKit\Config\contact();
-check('contact email from config', $contact['email'] === 'hello@example.com');
+check('contact email from config', $contact['email'] === 'info@elektro-wendt.de');
 check('contact recipient set', $contact['recipient'] !== '');
+check('empty recipient falls back to admin e-mail', $contact['recipient'] === 'admin@stub.test');
 
 // Empty contact config would fall back to admin_email: verify via merge().
 $bare = SiteKit\Config\merge(
@@ -139,7 +140,21 @@ check('bad format rejected', !SiteKit\Config\is_valid_repo('no slash'));
 
 // 11) Feature flags
 check('feature defaults false for unknown', SiteKit\Config\feature('nope') === false);
-check('seed_demo_content true from config', SiteKit\Config\feature('seed_demo_content', false) === true);
+check('seed_demo_content off in config', SiteKit\Config\feature('seed_demo_content', true) === false);
+
+// 12) List arrays are replaced, not merged by index
+$lists = SiteKit\Config\merge(['l' => ['a', 'b', 'c']], ['l' => ['x']]);
+check('list override replaces the whole list', $lists['l'] === ['x']);
+$keep = SiteKit\Config\merge(['l' => ['a', 'b']], ['l' => []]);
+check('empty override keeps the default list', $keep['l'] === ['a', 'b']);
+check('footer_nav has exactly the configured entries', count($all['footer_nav']) === 2);
+check('disabled post type stays false', ($all['content']['post_types']['event'] ?? null) === false);
+
+// 13) Local-business helpers
+$hours = SiteKit\Config\hours();
+check('monday hours parsed', $hours['week']['mo'] === ['07:00', '17:00']);
+check('sunday closed', $hours['week']['su'] === null);
+check('emergency enabled with phone', SiteKit\Config\emergency()['enabled'] === true);
 
 echo "\n{$checks} checks, {$failures} failures\n";
 exit($failures ? 1 : 0);

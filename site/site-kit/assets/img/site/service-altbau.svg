@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Platzhalter: Altbau-Fassade mit neuer Leitungsführung">
+  <!-- Image placeholder in technical-drawing style. Replace with a real photo
+       (1200×900 px or larger, same aspect ratio). -->
+  <defs>
+    <pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0v40" fill="none" stroke="#fff" stroke-opacity=".05"/></pattern>
+    <pattern id="G" width="200" height="200" patternUnits="userSpaceOnUse"><path d="M200 0H0v200" fill="none" stroke="#fff" stroke-opacity=".09"/></pattern>
+    <radialGradient id="glow" cx="78%" cy="18%" r="60%"><stop offset="0" stop-color="#ff6b1a" stop-opacity=".18"/><stop offset="1" stop-color="#ff6b1a" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="900" fill="#0b1424"/>
+  <rect width="1200" height="900" fill="url(#g)"/>
+  <rect width="1200" height="900" fill="url(#G)"/>
+  <rect width="1200" height="900" fill="url(#glow)"/>
+  <rect x="40" y="40" width="1120" height="820" fill="none" stroke="#fff" stroke-opacity=".2"/>
+  <g fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+    <path d="M80 760H1120" stroke-opacity=".5"/>
+    <path d="M250 760V180H950V760"/>
+    <path d="M230 180H970M240 160H960M250 340H950M250 500H950" stroke-opacity=".7"/>
+    <path d="M250 180L600 110L950 180" stroke-opacity=".5"/>
+    <path d="M300 310V232Q335 210 370 232V310Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M294 318h82" stroke-opacity=".5" stroke-width="2"/><path d="M430 310V232Q465 210 500 232V310Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M424 318h82" stroke-opacity=".5" stroke-width="2"/><path d="M560 310V232Q595 210 630 232V310Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M554 318h82" stroke-opacity=".5" stroke-width="2"/><path d="M690 310V232Q725 210 760 232V310Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M684 318h82" stroke-opacity=".5" stroke-width="2"/><path d="M820 310V232Q855 210 890 232V310Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M814 318h82" stroke-opacity=".5" stroke-width="2"/><path d="M300 470V392Q335 370 370 392V470Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M294 478h82" stroke-opacity=".5" stroke-width="2"/><path d="M430 470V392Q465 370 500 392V470Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M424 478h82" stroke-opacity=".5" stroke-width="2"/><path d="M560 470V392Q595 370 630 392V470Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M554 478h82" stroke-opacity=".5" stroke-width="2"/><path d="M690 470V392Q725 370 760 392V470Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M684 478h82" stroke-opacity=".5" stroke-width="2"/><path d="M820 470V392Q855 370 890 392V470Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M814 478h82" stroke-opacity=".5" stroke-width="2"/><path d="M300 630V552Q335 530 370 552V630Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M294 638h82" stroke-opacity=".5" stroke-width="2"/><path d="M430 630V552Q465 530 500 552V630Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M424 638h82" stroke-opacity=".5" stroke-width="2"/><path d="M560 630V552Q595 530 630 552V630Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M554 638h82" stroke-opacity=".5" stroke-width="2"/><path d="M690 630V552Q725 530 760 552V630Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M684 638h82" stroke-opacity=".5" stroke-width="2"/><path d="M820 630V552Q855 530 890 552V630Z" stroke-opacity=".75" stroke-width="2.5"/><path d="M814 638h82" stroke-opacity=".5" stroke-width="2"/>
+    <path d="M520 760V690Q560 650 600 650Q640 650 680 690V760" stroke-opacity=".8"/>
+    <path d="M1000 740V230" stroke="#ff6b1a" stroke-dasharray="12 9" stroke-width="4"/>
+    <path d="M1000 300H955M1000 460H955M1000 620H955" stroke="#ff6b1a" stroke-width="3"/>
+    <g stroke="#ff6b1a" stroke-width="2.5" fill="#0b1424">
+      <rect x="1010" y="280" width="50" height="40" rx="4"/>
+      <rect x="1010" y="440" width="50" height="40" rx="4"/>
+      <rect x="1010" y="600" width="50" height="40" rx="4"/>
+    </g>
+    <text x="1035" y="266" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="13" fill="#ff6b1a" fill-opacity=".95" stroke="none" letter-spacing="1.5" text-anchor="middle">UV</text>
+    <text x="1014" y="704" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="13" fill="#ff6b1a" fill-opacity=".95" stroke="none" letter-spacing="1.5" text-anchor="start">NEUE STEIG-</text>
+    <text x="1014" y="724" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="13" fill="#ff6b1a" fill-opacity=".95" stroke="none" letter-spacing="1.5" text-anchor="start">LEITUNG</text>
+    <text x="64" y="112" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="15" fill="#fff" fill-opacity=".7" stroke="none" letter-spacing="1.5" text-anchor="start">BAUJAHR 1905 · 3 GESCHOSSE</text>
+
+  </g>
+  <g font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" fill="#fff">
+    <text x="64" y="84" font-size="18" fill-opacity=".55" letter-spacing="2">ABB. 04</text>
+    <rect x="730" y="768" width="430" height="92" fill="#0b1424" stroke="#fff" stroke-opacity=".3"/>
+    <path d="M730 808h430M840 768v40" stroke="#fff" stroke-opacity=".3"/>
+    <text x="746" y="794" font-size="15" fill-opacity=".6" letter-spacing="1.5">ABB. 04</text>
+    <text x="856" y="794" font-size="15" letter-spacing="1.5">ALTBAUSANIERUNG</text>
+    <text x="746" y="838" font-size="14" fill="#ff6b1a" letter-spacing="1.5">BILDPLATZHALTER · FOTO EINSETZEN</text>
+  </g>
+</svg>

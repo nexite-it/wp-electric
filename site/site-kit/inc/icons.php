@@ -55,6 +55,21 @@ const PATHS = [
     'file-text'     => '<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
     'shield'        => '<path d="M12 3 5 6v6c0 4.2 2.9 7.7 7 9 4.1-1.3 7-4.8 7-9V6z"/><path d="m9 12 2 2 4-4"/>',
     'zap'           => '<path d="M13 3 5 14h6l-1 7 8-11h-6z"/>',
+
+    // Trade icons (Elektro): drawn for this set, same 24px grid and stroke.
+    'ev'            => '<path d="M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M2.5 21h14"/><path d="m10.5 7-2.5 4h3.5L9 15"/><path d="M15 10h1.5a1.5 1.5 0 0 1 1.5 1.5v4a1.5 1.5 0 0 0 3 0V8l-2.5-2.5"/>',
+    'smart-home'    => '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v12h14V9"/><path d="M8.8 14.6a4.5 4.5 0 0 1 6.4 0"/><circle cx="12" cy="17.6" r=".7" fill="currentColor"/>',
+    'building'      => '<path d="M3 21h18M5 21V8.5L12 4l7 4.5V21"/><path d="M10 21v-4.5h4V21"/><path d="M8.5 10h2v2h-2zM13.5 10h2v2h-2z"/>',
+    'wrench'        => '<path d="M19.7 6.14 16.63 9.21 14.79 7.37 17.86 4.3A5.5 5.5 0 0 0 10.2 11.68L4.75 17.13A1.5 1.5 0 0 0 6.87 19.25L12.32 13.8A5.5 5.5 0 0 0 19.7 6.14Z"/>',
+    'solar'         => '<path d="M6 12h15l-2.5 8H3.5z"/><path d="M11 12 8.5 20M16 12l-2.5 8M4.75 16h15"/><path d="M12.5 3v3M7.5 5 9 7M17.5 5 16 7"/>',
+    'whatsapp'      => '<path d="M3.5 20.5 5.07 15.5A8 8 0 1 1 8.62 18.75Z"/><path d="M9.6 8.6c-.4 2.5 2.4 5.5 5 5.7l.8-1.4-1.7-1-.8.6a3.8 3.8 0 0 1-1.9-1.9l.6-.8-1-1.7z"/>',
+    'award'         => '<circle cx="12" cy="9" r="6"/><path d="M8.6 13.9 7 21l5-2.8 5 2.8-1.6-7.1"/>',
+    'clipboard'     => '<rect x="5" y="4.5" width="14" height="17" rx="2"/><path d="M9 4.5v-1a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1M9 13l2 2 4-4"/>',
+    'plug'          => '<path d="M9 2.5V7M15 2.5V7M6.5 7h11v3.5a5.5 5.5 0 0 1-11 0zM12 16v5.5"/>',
+    'helmet'        => '<path d="M2 18.5h20"/><path d="M4 18.5V16a8 8 0 0 1 16 0v2.5"/><path d="M9.5 8.6V14M14.5 8.6V14"/>',
+    'eye'           => '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    'alert'         => '<path d="M10.3 4.2 2.6 17.5a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4M12 17h.01"/>',
+    'euro'          => '<path d="M17.5 6.2A7.3 7.3 0 1 0 17.5 17.8M4 10.2h9M4 13.8h9"/>',
 ];
 
 /** Inline SVG markup for an icon. */

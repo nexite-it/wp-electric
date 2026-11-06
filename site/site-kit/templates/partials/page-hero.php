@@ -1,8 +1,8 @@
 <?php
 /**
- * Partial: page hero (title band + breadcrumbs).
+ * Partial: page hero (title band + breadcrumbs) for every inner page.
  *
- * @var array{title?: string, lead?: string, eyebrow?: string, crumbs?: array<int, array{label: string, url?: string}>, meta?: string} $args
+ * @var array{title?: string, lead?: string, eyebrow?: string, crumbs?: array<int, array{label: string, url?: string}>, meta?: string, actions?: array<int, array{label: string, url: string, style?: string, icon?: string}>} $args
  */
 
 defined('ABSPATH') || exit;
@@ -14,18 +14,19 @@ $lead    = (string) ($lead ?? '');
 $eyebrow = (string) ($eyebrow ?? '');
 $meta    = (string) ($meta ?? '');
 $crumbs  = isset($crumbs) && is_array($crumbs) ? $crumbs : [];
+$actions = isset($actions) && is_array($actions) ? array_filter($actions, static fn($a): bool => !empty($a['url'])) : [];
 ?>
 <section class="sk-pagehero">
     <div class="sk-wrap">
         <?php if ($crumbs) : ?>
-            <nav class="sk-crumbs" aria-label="<?php esc_attr_e('Breadcrumbs', 'site-kit'); ?>">
-                <a href="<?php echo esc_url(home_url('/')); ?>"><?php esc_html_e('Home', 'site-kit'); ?></a>
+            <nav class="sk-crumbs" aria-label="<?php esc_attr_e('Brotkrümelnavigation', 'site-kit'); ?>">
+                <a href="<?php echo esc_url(home_url('/')); ?>"><?php esc_html_e('Startseite', 'site-kit'); ?></a>
                 <?php foreach ($crumbs as $crumb) : ?>
-                    <span aria-hidden="true">›</span>
+                    <span class="sk-crumbs__sep" aria-hidden="true">/</span>
                     <?php if (!empty($crumb['url'])) : ?>
                         <a href="<?php echo esc_url((string) $crumb['url']); ?>"><?php echo esc_html((string) ($crumb['label'] ?? '')); ?></a>
                     <?php else : ?>
-                        <span><?php echo esc_html((string) ($crumb['label'] ?? '')); ?></span>
+                        <span aria-current="page"><?php echo esc_html((string) ($crumb['label'] ?? '')); ?></span>
                     <?php endif; ?>
                 <?php endforeach; ?>
             </nav>
@@ -43,6 +44,20 @@ $crumbs  = isset($crumbs) && is_array($crumbs) ? $crumbs : [];
 
         <?php if ($meta !== '') : ?>
             <p class="sk-pagehero__meta"><?php echo esc_html($meta); ?></p>
+        <?php endif; ?>
+
+        <?php if ($actions) : ?>
+            <div class="sk-actions">
+                <?php foreach ($actions as $action) : ?>
+                    <?php $btn = 'sk-btn sk-btn--' . sanitize_html_class((string) ($action['style'] ?? 'accent')); ?>
+                    <a class="<?php echo esc_attr($btn); ?>" href="<?php echo esc_url((string) $action['url'], ['http', 'https', 'tel', 'mailto']); ?>">
+                        <?php if (!empty($action['icon'])) : ?>
+                            <?php Util\icon((string) $action['icon']); ?>
+                        <?php endif; ?>
+                        <?php echo esc_html((string) $action['label']); ?>
+                    </a>
+                <?php endforeach; ?>
+            </div>
         <?php endif; ?>
     </div>
 </section>

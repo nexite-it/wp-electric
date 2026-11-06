@@ -12,16 +12,16 @@ use SiteKit\Util;
 <main id="content">
     <?php
     Util\page_hero([
-        'eyebrow' => __('Search', 'site-kit'),
+        'eyebrow' => __('Suche', 'site-kit'),
         'title'   => get_search_query() !== ''
-            ? sprintf(__('Results for “%s”', 'site-kit'), get_search_query())
-            : __('Search', 'site-kit'),
+            ? sprintf(__('Ergebnisse für „%s“', 'site-kit'), get_search_query())
+            : __('Suche', 'site-kit'),
         'lead'    => sprintf(
             /* translators: %s: number of results. */
-            _n('%s result found.', '%s results found.', (int) $GLOBALS['wp_query']->found_posts, 'site-kit'),
+            _n('%s Ergebnis gefunden.', '%s Ergebnisse gefunden.', (int) $GLOBALS['wp_query']->found_posts, 'site-kit'),
             number_format_i18n((int) $GLOBALS['wp_query']->found_posts)
         ),
-        'crumbs'  => [['label' => __('Search', 'site-kit')]],
+        'crumbs'  => [['label' => __('Suche', 'site-kit')]],
     ]);
     ?>
 
@@ -40,13 +40,13 @@ use SiteKit\Util;
 
                         $post_type = (string) get_post_type();
                         $object    = get_post_type_object($post_type);
-                        $label     = $object instanceof WP_Post_Type ? $object->labels->singular_name : __('Page', 'site-kit');
+                        $label     = $object instanceof WP_Post_Type ? $object->labels->singular_name : __('Seite', 'site-kit');
                         ?>
                         <article class="sk-card sk-card--pad reveal" data-d="<?php echo esc_attr((string) ($index % 3)); ?>">
                             <p class="sk-news__meta"><?php echo esc_html($label); ?></p>
                             <h2 class="sk-card__title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
                             <p><?php echo esc_html(Util\excerpt(get_post(), 22)); ?></p>
-                            <span class="sk-card__foot"><?php esc_html_e('Open', 'site-kit'); ?><?php Util\icon('chevron-right', ''); ?></span>
+                            <span class="sk-card__foot"><?php esc_html_e('Öffnen', 'site-kit'); ?><?php Util\icon('chevron-right', ''); ?></span>
                         </article>
                         <?php
                         $index++;
@@ -58,8 +58,8 @@ use SiteKit\Util;
             <?php else : ?>
                 <div class="sk-empty reveal">
                     <div class="sk-empty__icon"><?php Util\icon('search', ''); ?></div>
-                    <h2><?php esc_html_e('No results', 'site-kit'); ?></h2>
-                    <p><?php esc_html_e('Try a different term, or browse the navigation above.', 'site-kit'); ?></p>
+                    <h2><?php esc_html_e('Keine Treffer', 'site-kit'); ?></h2>
+                    <p><?php esc_html_e('Versuchen Sie einen anderen Begriff oder nutzen Sie die Navigation oben.', 'site-kit'); ?></p>
                 </div>
             <?php endif; ?>
         </div>

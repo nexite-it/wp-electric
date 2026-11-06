@@ -1,12 +1,15 @@
 <?php
 /**
- * Template: start page.
+ * Template: Startseite.
  *
- * Hero, numbers band, topics marquee, what-we-do, upcoming events, news,
- * focus areas, team teaser, call to action and social strip.
+ * Built around the visitor's first questions, in this order:
+ *   1. "Can someone help me now?"    → hero with emergency panel
+ *   2. "Are they qualified?"          → trust bar (certifications, partners)
+ *   3. "Do they do what I need?"      → service grid (high-ticket first)
+ *   4. "Why them?"                    → figures and promises
+ *   5. (and for craftspeople)         → recruiting banner
  *
- * Sections that have no content are skipped, so a brand-new install with demo
- * content disabled still renders a clean page.
+ * All copy comes from inc/content.php, all business data from config.php.
  */
 
 defined('ABSPATH') || exit;
@@ -15,298 +18,280 @@ use SiteKit\Config;
 use SiteKit\Content;
 use SiteKit\Util;
 
-$hero     = Content\hero();
-$stats    = Content\stats();
-$topics   = Content\topics();
-$pillars  = Content\pillars();
-$events   = Util\upcoming_events(4);
-$news     = Util\posts('news', 3);
-$team     = Util\posts('person', 4, ['orderby' => 'menu_order', 'order' => 'ASC']);
-$contact  = Config\contact();
-$socials  = Config\socials();
+$hero      = Content\hero();
+$certs     = Content\certifications();
+$why       = Content\why();
+$stats     = Content\stats();
+$jobs      = Content\jobs();
+$emergency = Config\emergency();
+$partners  = array_filter((array) Config\get('partners', []), 'is_array');
+$whatsapp  = Util\whatsapp_url();
+$hours     = Util\hours_summary();
 
-$link = static function (array $target): string {
-    return Config\resolve_location((string) ($target['slug'] ?? ''));
-};
+$services = array_filter(Content\services(), static fn(array $s): bool => !empty($s['home']));
+$extras   = array_diff_key(Content\services(), $services);
 
-$primary_url   = $link($hero['primary']);
-$secondary_url = $link($hero['secondary']);
+$contact_url  = Config\page_url('contact', [], 'anfrage');
+$services_url = Config\page_url('services');
+$about_url    = Config\page_url('about');
 
 \SiteKit\Template\partial('header', ['page_key' => 'home']);
 ?>
 <main id="content">
 
-    <!-- Hero -->
+    <!-- Hero: who we are + immediate help -->
     <section class="sk-hero">
-        <div class="sk-wrap">
-            <div class="sk-hero__grid">
-                <div class="sk-hero__copy">
-                    <p class="sk-hero__kicker"><?php echo esc_html($hero['kicker']); ?></p>
-                    <h1 class="sk-hero__title">
-                        <?php foreach ($hero['title'] as $i => $line) : ?>
-                            <span class="sk-box<?php echo $i === count($hero['title']) - 1 ? ' sk-box--accent' : ''; ?>"><?php echo esc_html($line); ?></span>
-                        <?php endforeach; ?>
-                    </h1>
-                    <p class="sk-hero__lead"><?php echo esc_html($hero['lead']); ?></p>
-                    <div class="sk-hero__actions">
-                        <?php if ($primary_url !== '') : ?>
-                            <a class="sk-btn sk-btn--accent" href="<?php echo esc_url($primary_url); ?>">
-                                <?php echo esc_html($hero['primary']['label']); ?>
-                                <?php Util\icon('arrow-right'); ?>
-                            </a>
-                        <?php endif; ?>
-                        <?php if ($secondary_url !== '') : ?>
-                            <a class="sk-btn sk-btn--outline" href="<?php echo esc_url($secondary_url); ?>">
-                                <?php echo esc_html($hero['secondary']['label']); ?>
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                </div>
+        <div class="sk-wrap sk-hero__grid">
+            <div class="sk-hero__copy">
+                <p class="sk-hero__kicker"><?php echo esc_html($hero['kicker']); ?></p>
+                <h1 class="sk-hero__title">
+                    <?php foreach ($hero['title'] as $i => $line) : ?>
+                        <span class="<?php echo $i === count($hero['title']) - 1 ? 'sk-hero__accent' : 'sk-hero__line'; ?>"><?php echo esc_html($line); ?></span>
+                    <?php endforeach; ?>
+                </h1>
+                <p class="sk-hero__lead"><?php echo esc_html($hero['lead']); ?></p>
 
-                <div class="sk-hero__media">
-                    <span class="sk-hero__dot" aria-hidden="true"></span>
-                    <figure class="sk-hero__photo">
-                        <img src="<?php echo esc_url(Util\asset('img/site/hero.svg')); ?>"
-                             alt="" width="1200" height="900" fetchpriority="high">
-                    </figure>
-
-                    <?php if ($events['items']) :
-                        $next = $events['items'][0];
-                        $date = Util\meta('sk_event_date', $next);
-                        $parts = Util\date_parts($date);
-                        ?>
-                        <a class="sk-hero__note" href="<?php the_permalink($next); ?>">
-                            <span class="sk-hero__note-date">
-                                <b><?php echo esc_html($parts['day']); ?></b>
-                                <span><?php echo esc_html($parts['month']); ?></span>
-                            </span>
-                            <span>
-                                <small><?php echo $events['upcoming'] ? esc_html__('Next event', 'site-kit') : esc_html__('Last event', 'site-kit'); ?></small>
-                                <strong><?php echo esc_html(get_the_title($next)); ?></strong>
-                            </span>
+                <div class="sk-hero__actions">
+                    <?php if ($contact_url !== '') : ?>
+                        <a class="sk-btn sk-btn--accent sk-btn--lg" href="<?php echo esc_url($contact_url); ?>">
+                            <?php echo esc_html($hero['primary']); ?>
+                            <?php Util\icon('arrow-right'); ?>
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($emergency['enabled']) : ?>
+                        <a class="sk-btn sk-btn--sos sk-btn--lg" href="<?php echo esc_url(Util\tel($emergency['phone']), ['tel']); ?>">
+                            <span class="sk-live" aria-hidden="true"></span>
+                            <span><?php esc_html_e('Notdienst', 'site-kit'); ?> <b><?php echo esc_html($emergency['phone']); ?></b></span>
                         </a>
                     <?php endif; ?>
                 </div>
+
+                <ul class="sk-hero__checks">
+                    <?php foreach ($hero['checks'] as $check) : ?>
+                        <li><?php Util\icon('check', ''); ?><?php echo esc_html($check); ?></li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
 
-            <?php if ($stats) : ?>
-                <div class="sk-stats">
-                    <?php foreach ($stats as $stat) : ?>
-                        <div class="sk-stats__item">
-                            <div class="sk-stats__num" data-count="<?php echo esc_attr((string) $stat['num']); ?>"><?php echo esc_html((string) $stat['num']); ?></div>
-                            <div class="sk-stats__label"><?php echo esc_html($stat['label']); ?></div>
+            <?php if ($emergency['enabled']) : ?>
+                <aside class="sk-ops" aria-label="<?php esc_attr_e('Notdienst und Erreichbarkeit', 'site-kit'); ?>">
+                    <div class="sk-ops__head">
+                        <span class="sk-label"><?php esc_html_e('Elektro-Notdienst', 'site-kit'); ?></span>
+                        <span class="sk-ops__live"><span class="sk-live" aria-hidden="true"></span><?php esc_html_e('24/7 erreichbar', 'site-kit'); ?></span>
+                    </div>
+
+                    <a class="sk-ops__phone" href="<?php echo esc_url(Util\tel($emergency['phone']), ['tel']); ?>">
+                        <?php Util\icon('phone', ''); ?>
+                        <span><?php echo esc_html($emergency['phone']); ?></span>
+                    </a>
+                    <?php if ($emergency['note'] !== '') : ?>
+                        <p class="sk-ops__note"><?php echo esc_html($emergency['note']); ?></p>
+                    <?php endif; ?>
+
+                    <dl class="sk-ops__rows">
+                        <?php if ($hours !== '') : ?>
+                            <div>
+                                <dt><?php esc_html_e('Büro', 'site-kit'); ?></dt>
+                                <dd class="sk-status" data-open-status>
+                                    <span class="sk-status__dot" aria-hidden="true"></span>
+                                    <span data-open-text><?php echo esc_html($hours); ?></span>
+                                </dd>
+                            </div>
+                        <?php endif; ?>
+                        <?php if ($emergency['eta'] !== '') : ?>
+                            <div>
+                                <dt><?php esc_html_e('Anfahrt', 'site-kit'); ?></dt>
+                                <dd><?php echo esc_html($emergency['eta']); ?></dd>
+                            </div>
+                        <?php endif; ?>
+                        <div>
+                            <dt><?php esc_html_e('Gebiet', 'site-kit'); ?></dt>
+                            <dd><?php esc_html_e('Bonn & Rhein-Sieg-Kreis', 'site-kit'); ?></dd>
                         </div>
-                    <?php endforeach; ?>
+                    </dl>
+
+                    <p class="sk-ops__warn">
+                        <?php Util\icon('alert', ''); ?>
+                        <span><?php esc_html_e('Bei Brand oder Verletzten zuerst die 112 wählen. Betroffenen Stromkreis abschalten und Abstand halten.', 'site-kit'); ?></span>
+                    </p>
+                </aside>
+            <?php endif; ?>
+        </div>
+    </section>
+
+    <!-- Trust bar: qualifications + partner brands -->
+    <section class="sk-trust" aria-label="<?php esc_attr_e('Qualifikationen und Partner', 'site-kit'); ?>">
+        <div class="sk-wrap">
+            <ul class="sk-trust__certs">
+                <?php foreach ($certs as $cert) : ?>
+                    <li class="sk-cert">
+                        <span class="sk-cert__icon"><?php Util\icon((string) $cert['icon'], ''); ?></span>
+                        <span class="sk-cert__text">
+                            <b><?php echo esc_html($cert['title']); ?></b>
+                            <small><?php echo esc_html($cert['text']); ?></small>
+                        </span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+
+            <?php if ($partners) : ?>
+                <div class="sk-trust__partners">
+                    <p class="sk-label"><?php esc_html_e('Partner für Markentechnik', 'site-kit'); ?></p>
+                    <ul class="sk-logos">
+                        <?php foreach ($partners as $partner) : ?>
+                            <li class="sk-logo">
+                                <?php if (!empty($partner['logo'])) : ?>
+                                    <img src="<?php echo esc_url(Util\img((string) $partner['logo'])); ?>" alt="<?php echo esc_attr((string) ($partner['name'] ?? '')); ?>" loading="lazy" height="28">
+                                <?php else : ?>
+                                    <?php echo esc_html((string) ($partner['name'] ?? '')); ?>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
             <?php endif; ?>
         </div>
     </section>
 
-    <?php if ($topics) : ?>
-        <div class="sk-marquee" role="presentation">
-            <div class="sk-marquee__track">
-                <?php for ($i = 0; $i < 2; $i++) : ?>
-                    <div class="sk-marquee__group"<?php echo $i ? ' aria-hidden="true"' : ''; ?>>
-                        <?php foreach ($topics as $topic) : ?>
-                            <span class="sk-marquee__item"><?php echo esc_html($topic); ?></span>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endfor; ?>
-            </div>
-        </div>
-    <?php endif; ?>
-
-    <!-- What we do -->
-    <section class="sk-section">
+    <!-- Services -->
+    <section class="sk-section" id="leistungen" aria-labelledby="sk-services-title">
         <div class="sk-wrap">
-            <div class="sk-statement">
-                <div class="reveal">
-                    <p class="sk-eyebrow"><?php esc_html_e('What we do', 'site-kit'); ?></p>
-                    <h2 class="sk-statement__title">
-                        <?php esc_html_e('Talk less.', 'site-kit'); ?><br>
-                        <span class="sk-mark"><?php esc_html_e('Do more.', 'site-kit'); ?></span>
-                    </h2>
+            <div class="sk-headrow reveal">
+                <div>
+                    <p class="sk-eyebrow"><?php esc_html_e('Leistungen', 'site-kit'); ?></p>
+                    <h2 id="sk-services-title"><?php esc_html_e('Von der Wallbox bis zum Zählerschrank.', 'site-kit'); ?></h2>
                 </div>
-                <div class="sk-statement__body reveal" data-d="1">
-                    <p class="sk-lead">
-                        <?php echo esc_html((string) Config\get('brand.description', '')); ?>
-                    </p>
-                    <?php $about = Config\resolve_location('about'); ?>
-                    <?php if ($about !== '') : ?>
-                        <a class="sk-link" href="<?php echo esc_url($about); ?>">
-                            <?php esc_html_e('More about us', 'site-kit'); ?>
+                <p class="sk-headrow__side"><?php esc_html_e('Vier Schwerpunkte, ein Ansprechpartner: Wir planen, installieren und prüfen – alles aus einer Hand.', 'site-kit'); ?></p>
+            </div>
+
+            <div class="sk-bento">
+                <?php $n = 0; ?>
+                <?php foreach ($services as $key => $service) : ?>
+                    <?php
+                    $n++;
+                    $is_feature = $service['home'] === 'feature';
+                    $url        = $services_url !== '' ? $services_url . '#' . $key : '';
+                    ?>
+                    <article class="sk-svc<?php echo $is_feature ? ' sk-svc--feature' : ''; ?> reveal" data-d="<?php echo esc_attr((string) (($n - 1) % 2)); ?>">
+                        <div class="sk-svc__top">
+                            <span class="sk-svc__icon"><?php Util\icon((string) $service['icon'], ''); ?></span>
+                            <span class="sk-svc__num"><?php echo esc_html(sprintf('%02d', $n)); ?></span>
+                        </div>
+                        <h3 class="sk-svc__title">
+                            <?php if ($url !== '') : ?>
+                                <a href="<?php echo esc_url($url); ?>"><?php echo esc_html($service['title']); ?></a>
+                            <?php else : ?>
+                                <?php echo esc_html($service['title']); ?>
+                            <?php endif; ?>
+                        </h3>
+                        <p class="sk-svc__text"><?php echo esc_html($service['teaser']); ?></p>
+                        <?php if (!empty($service['chips'])) : ?>
+                            <ul class="sk-chips">
+                                <?php foreach ($service['chips'] as $chip) : ?>
+                                    <li><?php echo esc_html($chip); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+                        <span class="sk-svc__more" aria-hidden="true">
+                            <?php esc_html_e('Mehr erfahren', 'site-kit'); ?>
                             <?php Util\icon('arrow-right', ''); ?>
+                        </span>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+
+            <?php if ($services_url !== '') : ?>
+                <p class="sk-more reveal">
+                    <span>
+                        <?php
+                        echo esc_html(sprintf(
+                            /* translators: %s: comma separated service names */
+                            __('Außerdem: %s, E-Check, Zählerschrank-Erneuerung und Rauchwarnmelder.', 'site-kit'),
+                            implode(', ', array_map(static fn(array $s): string => (string) $s['title'], $extras))
+                        ));
+                        ?>
+                    </span>
+                    <a class="sk-link" href="<?php echo esc_url($services_url); ?>">
+                        <?php esc_html_e('Alle Leistungen', 'site-kit'); ?>
+                        <?php Util\icon('arrow-right', ''); ?>
+                    </a>
+                </p>
+            <?php endif; ?>
+        </div>
+    </section>
+
+    <!-- Why us -->
+    <section class="sk-section sk-section--tint" aria-labelledby="sk-why-title">
+        <div class="sk-wrap sk-why">
+            <div class="sk-why__copy reveal">
+                <p class="sk-eyebrow"><?php echo esc_html($why['eyebrow']); ?></p>
+                <h2 id="sk-why-title"><?php echo esc_html($why['title']); ?> <span class="sk-mark"><?php echo esc_html($why['mark']); ?></span></h2>
+                <p class="sk-lead"><?php echo esc_html($why['text']); ?></p>
+                <ul class="sk-checklist">
+                    <?php foreach ($why['points'] as $point) : ?>
+                        <li><?php Util\icon('check', ''); ?><span><?php echo esc_html($point); ?></span></li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php if ($about_url !== '') : ?>
+                    <a class="sk-link" href="<?php echo esc_url($about_url); ?>">
+                        <?php esc_html_e('Mehr über uns', 'site-kit'); ?>
+                        <?php Util\icon('arrow-right', ''); ?>
+                    </a>
+                <?php endif; ?>
+            </div>
+
+            <dl class="sk-figures reveal" data-d="1">
+                <?php foreach ($stats as $stat) : ?>
+                    <div class="sk-figure">
+                        <dt><?php echo esc_html($stat['label']); ?></dt>
+                        <dd>
+                            <span data-count="<?php echo esc_attr((string) (int) $stat['num']); ?>"><?php echo esc_html(number_format((int) $stat['num'], 0, ',', '.')); ?></span><?php echo esc_html($stat['suffix']); ?>
+                        </dd>
+                    </div>
+                <?php endforeach; ?>
+            </dl>
+        </div>
+    </section>
+
+    <!-- Recruiting -->
+    <section class="sk-jobs" aria-labelledby="sk-jobs-title">
+        <div class="sk-wrap sk-jobs__inner">
+            <div class="sk-jobs__copy reveal">
+                <p class="sk-label"><?php echo esc_html($jobs['eyebrow']); ?></p>
+                <h2 id="sk-jobs-title"><?php echo esc_html($jobs['title']); ?></h2>
+                <p><?php echo esc_html($jobs['text']); ?></p>
+                <div class="sk-actions">
+                    <?php $apply = Config\page_url('contact', ['leistung' => 'bewerbung'], 'anfrage'); ?>
+                    <?php if ($apply !== '') : ?>
+                        <a class="sk-btn sk-btn--dark" href="<?php echo esc_url($apply); ?>">
+                            <?php echo esc_html($jobs['apply']); ?>
+                            <?php Util\icon('arrow-right'); ?>
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($whatsapp !== '') : ?>
+                        <a class="sk-btn sk-btn--outline-dark" href="<?php echo esc_url(Util\whatsapp_url($jobs['quick_text'])); ?>" rel="noopener" target="_blank">
+                            <?php Util\icon('whatsapp'); ?>
+                            <?php echo esc_html($jobs['quick']); ?>
                         </a>
                     <?php endif; ?>
                 </div>
             </div>
 
-            <div class="sk-feature">
-                <figure class="sk-feature__img reveal">
-                    <img src="<?php echo esc_url(Util\asset('img/site/feature.svg')); ?>"
-                         alt="" loading="lazy" width="1200" height="800">
-                </figure>
-                <div class="reveal" data-d="1">
-                    <ol class="sk-principles">
-                        <?php foreach (Content\principles() as $principle) : ?>
-                            <li>
-                                <b><?php echo esc_html($principle['title']); ?></b>
-                                <span><?php echo esc_html($principle['text']); ?></span>
-                            </li>
-                        <?php endforeach; ?>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Events -->
-    <?php if ($events['items']) : ?>
-        <section class="sk-section sk-section--tint">
-            <div class="sk-wrap">
-                <?php
-                Util\head_row([
-                    'eyebrow' => $events['upcoming'] ? __('Calendar', 'site-kit') : __('Calendar', 'site-kit'),
-                    'title'   => $events['upcoming'] ? __('What is coming up', 'site-kit') : __('Recently at our place', 'site-kit'),
-                    'action'  => post_type_exists('event')
-                        ? ['label' => __('All events', 'site-kit'), 'url' => (string) get_post_type_archive_link('event')]
-                        : [],
-                ]);
-                ?>
-                <ol class="sk-agenda reveal">
-                    <?php foreach ($events['items'] as $event) :
-                        $date     = Util\meta('sk_event_date', $event);
-                        $time     = Util\meta('sk_event_time', $event);
-                        $location = Util\meta('sk_event_location', $event);
-                        $parts    = Util\date_parts($date);
-                        $terms    = get_the_terms($event, 'event_type');
-                        $terms    = is_array($terms) ? $terms : [];
-                        ?>
-                        <li>
-                            <a class="sk-agenda__row" href="<?php the_permalink($event); ?>">
-                                <span class="sk-agenda__date">
-                                    <?php if ($parts['day'] !== '') : ?>
-                                        <b><?php echo esc_html($parts['day']); ?></b>
-                                        <span><?php echo esc_html($parts['month'] . ' ' . $parts['year']); ?></span>
-                                    <?php endif; ?>
-                                </span>
-                                <span class="sk-agenda__main">
-                                    <?php if ($terms) : ?>
-                                        <span class="sk-agenda__cat"><?php echo esc_html($terms[0]->name); ?></span>
-                                    <?php endif; ?>
-                                    <span class="sk-agenda__title"><?php echo esc_html(get_the_title($event)); ?></span>
-                                </span>
-                                <span class="sk-agenda__where">
-                                    <?php
-                                    if ($location !== '') {
-                                        Util\icon('location', '');
-                                        echo esc_html($location);
-                                    }
-                                    if ($time !== '') {
-                                        echo ' · ' . esc_html($time);
-                                    }
-                                    ?>
-                                </span>
-                                <span class="sk-agenda__arrow" aria-hidden="true"><?php Util\icon('arrow-right', ''); ?></span>
-                            </a>
-                        </li>
-                    <?php endforeach; ?>
-                </ol>
-            </div>
-        </section>
-    <?php endif; ?>
-
-    <!-- News -->
-    <?php if ($news) : ?>
-        <section class="sk-section">
-            <div class="sk-wrap">
-                <?php
-                Util\head_row([
-                    'eyebrow' => __('Updates', 'site-kit'),
-                    'title'   => __('Latest news', 'site-kit'),
-                    'action'  => ['label' => __('All news', 'site-kit'), 'url' => (string) get_post_type_archive_link('news')],
-                ]);
-                ?>
-                <div class="sk-grid sk-grid--3">
-                    <?php foreach ($news as $i => $item) : ?>
-                        <?php \SiteKit\Template\partial('news-card', ['post' => $item, 'delay' => $i, 'size' => $i === 0 ? 'large' : '']); ?>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </section>
-    <?php endif; ?>
-
-    <!-- Focus areas -->
-    <section class="sk-section sk-section--dark">
-        <div class="sk-wrap">
-            <?php
-            Util\head_row([
-                'eyebrow' => __('Our focus', 'site-kit'),
-                'title'   => __('Four areas. One goal: <span class="sk-mark">a better place.</span>', 'site-kit'),
-            ]);
-            ?>
-            <div class="sk-pillars">
-                <?php foreach ($pillars as $i => $pillar) : ?>
-                    <div class="sk-pillar reveal" data-d="<?php echo esc_attr((string) $i); ?>">
-                        <span class="sk-pillar__num"><?php echo esc_html(sprintf('%02d', $i + 1)); ?></span>
-                        <div class="sk-pillar__icon"><?php Util\icon((string) $pillar['icon'], ''); ?></div>
-                        <h3><?php echo esc_html($pillar['title']); ?></h3>
-                        <ul>
-                            <?php foreach ($pillar['points'] as $point) : ?>
-                                <li><?php echo wp_kses_post($point); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    </section>
-
-    <!-- Team teaser -->
-    <?php if ($team) : ?>
-        <section class="sk-section">
-            <div class="sk-wrap">
-                <?php
-                Util\head_row([
-                    'eyebrow' => __('Who we are', 'site-kit'),
-                    'title'   => __('The people behind it', 'site-kit'),
-                    'side'    => __('Every role here is voluntary.', 'site-kit'),
-                    'action'  => Config\resolve_location('team') !== ''
-                        ? ['label' => __('Meet the team', 'site-kit'), 'url' => Config\resolve_location('team')]
-                        : [],
-                ]);
-                ?>
-                <div class="sk-grid sk-grid--4">
-                    <?php foreach ($team as $i => $person) : ?>
-                        <?php \SiteKit\Template\partial('person-card', ['post' => $person, 'delay' => $i % 4]); ?>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </section>
-    <?php endif; ?>
-
-    <!-- Call to action -->
-    <?php if ($primary_url !== '') : ?>
-        <section class="sk-section sk-section--tight">
-            <div class="sk-wrap">
-                <div class="sk-cta reveal">
-                    <h2><?php esc_html_e('Want to be part of it?', 'site-kit'); ?></h2>
-                    <p><?php echo esc_html((string) Config\get('brand.description', '')); ?></p>
-                    <div class="sk-cta__actions">
-                        <a class="sk-btn sk-btn--accent" href="<?php echo esc_url($primary_url); ?>">
-                            <?php echo esc_html($hero['primary']['label']); ?>
-                            <?php Util\icon('arrow-right'); ?>
+            <ul class="sk-jobs__list reveal" data-d="1">
+                <?php foreach ($jobs['positions'] as $position) : ?>
+                    <li>
+                        <a href="<?php echo esc_url($about_url !== '' ? $about_url . '#karriere' : $apply); ?>">
+                            <span>
+                                <b><?php echo esc_html($position['title']); ?></b>
+                                <small><?php echo esc_html($position['meta']); ?></small>
+                            </span>
+                            <?php Util\icon('arrow-right', ''); ?>
                         </a>
-                        <?php if ($secondary_url !== '') : ?>
-                            <a class="sk-btn sk-btn--outline" href="<?php echo esc_url($secondary_url); ?>">
-                                <?php echo esc_html($hero['secondary']['label']); ?>
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-        </section>
-    <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </section>
 
 </main>
 <?php

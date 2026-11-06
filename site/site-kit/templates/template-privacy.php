@@ -1,9 +1,11 @@
 <?php
 /**
- * Template: privacy policy.
+ * Template: Datenschutzerklärung.
  *
- * Placeholder legal page. The notes below describe what this kit actually does
- * with data, so the text starts from the truth instead of boilerplate.
+ * Placeholder privacy policy that describes what this website actually does:
+ * local fonts, no tracking, form data by e-mail only, WhatsApp and
+ * OpenStreetMap only after the visitor's own click. Have it reviewed before
+ * launch. Text written in the page editor replaces it completely.
  */
 
 defined('ABSPATH') || exit;
@@ -12,8 +14,13 @@ use SiteKit\Config;
 use SiteKit\Content;
 use SiteKit\Util;
 
+if (have_posts()) {
+    the_post();
+}
+
 $intro   = Content\page_intro('privacy');
 $contact = Config\contact();
+$company = (string) Config\get('brand.legal_name', Config\brand_name());
 
 \SiteKit\Template\partial('header', []);
 ?>
@@ -21,44 +28,52 @@ $contact = Config\contact();
     <?php
     Util\page_hero([
         'eyebrow' => $intro['eyebrow'],
-        'title'   => get_the_title() ?: $intro['title'],
-        'crumbs'  => [['label' => $intro['title']]],
+        'title'   => $intro['title'],
+        'crumbs'  => [['label' => get_the_title() ?: $intro['title']]],
     ]);
     ?>
 
     <section class="sk-section">
         <div class="sk-wrap sk-wrap--narrow">
-            <article class="sk-prose reveal">
+            <article class="sk-prose">
                 <?php if (trim((string) get_post_field('post_content', get_the_ID())) !== '') : ?>
                     <?php the_content(); ?>
                 <?php else : ?>
                     <div class="sk-callout">
-                        <strong><?php esc_html_e('Placeholder content', 'site-kit'); ?></strong>
-                        <p><?php esc_html_e('Have this text reviewed before going live. The notes below describe what this website actually does, which is usually the hardest part to get right.', 'site-kit'); ?></p>
+                        <strong><?php esc_html_e('Platzhalter', 'site-kit'); ?></strong>
+                        <p><?php esc_html_e('Dieser Text beschreibt, was diese Website technisch tatsächlich tut. Bitte vor dem Livegang rechtlich prüfen lassen und um Angaben zu Hosting-Anbieter und E-Mail-Dienst ergänzen.', 'site-kit'); ?></p>
                     </div>
 
-                    <h2><?php esc_html_e('Controller', 'site-kit'); ?></h2>
+                    <h2><?php esc_html_e('1. Verantwortlicher', 'site-kit'); ?></h2>
                     <p>
-                        <?php echo esc_html((string) Config\get('brand.legal_name', Config\brand_name())); ?><br>
+                        <?php echo esc_html($company); ?><br>
                         <?php echo esc_html($contact['street']); ?><br>
                         <?php echo esc_html($contact['city']); ?><br>
-                        <?php esc_html_e('E-mail:', 'site-kit'); ?> <a href="mailto:<?php echo esc_attr($contact['email']); ?>"><?php echo esc_html($contact['email']); ?></a>
+                        <?php esc_html_e('E-Mail:', 'site-kit'); ?> <a href="mailto:<?php echo esc_attr($contact['email']); ?>"><?php echo esc_html($contact['email']); ?></a>
                     </p>
 
-                    <h2><?php esc_html_e('Hosting and server logs', 'site-kit'); ?></h2>
-                    <p><?php esc_html_e('The hosting provider processes technically necessary data (IP address, time, requested URL, browser) in server logs to operate the site securely. The legal basis is our legitimate interest in a functioning, secure website.', 'site-kit'); ?></p>
+                    <h2><?php esc_html_e('2. Hosting und Server-Logfiles', 'site-kit'); ?></h2>
+                    <p><?php esc_html_e('Beim Aufruf dieser Website verarbeitet unser Hosting-Anbieter technisch notwendige Daten (IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, Browsertyp) in Server-Logfiles. Rechtsgrundlage ist unser berechtigtes Interesse an einem sicheren und stabilen Betrieb der Website (Art. 6 Abs. 1 lit. f DSGVO).', 'site-kit'); ?></p>
 
-                    <h2><?php esc_html_e('Contact form', 'site-kit'); ?></h2>
-                    <p><?php esc_html_e('When you use the contact form, the details you enter are sent to us by e-mail so we can answer your request. They are not stored in this website\'s database. The legal basis is your request itself.', 'site-kit'); ?></p>
+                    <h2><?php esc_html_e('3. Kontaktformular, E-Mail und Telefon', 'site-kit'); ?></h2>
+                    <p><?php esc_html_e('Wenn Sie uns über das Formular, per E-Mail oder telefonisch kontaktieren, verarbeiten wir Ihre Angaben (z. B. Name, Kontaktdaten, Projektbeschreibung), um Ihre Anfrage zu beantworten und ein Angebot zu erstellen. Rechtsgrundlage ist die Durchführung vorvertraglicher Maßnahmen (Art. 6 Abs. 1 lit. b DSGVO) sowie Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO).', 'site-kit'); ?></p>
+                    <p><?php esc_html_e('Formularangaben werden nicht in der Datenbank dieser Website gespeichert, sondern per E-Mail an uns übermittelt. Wir löschen sie, sobald Ihre Anfrage abschließend bearbeitet ist und keine gesetzlichen Aufbewahrungspflichten (etwa bei einem Auftrag) entgegenstehen.', 'site-kit'); ?></p>
 
-                    <h2><?php esc_html_e('Cookies and tracking', 'site-kit'); ?></h2>
-                    <p><?php esc_html_e('This website sets no tracking or marketing cookies and loads no external analytics. Logged-in editors receive the usual WordPress session cookies.', 'site-kit'); ?></p>
+                    <h2><?php esc_html_e('4. Bewerbungen', 'site-kit'); ?></h2>
+                    <p><?php esc_html_e('Bewerbungsunterlagen verarbeiten wir ausschließlich zur Durchführung des Bewerbungsverfahrens (Art. 6 Abs. 1 lit. b DSGVO). Kommt kein Arbeitsverhältnis zustande, löschen wir die Unterlagen spätestens sechs Monate nach Abschluss des Verfahrens.', 'site-kit'); ?></p>
 
-                    <h2><?php esc_html_e('External content', 'site-kit'); ?></h2>
-                    <p><?php esc_html_e('Fonts are served from this server — no font CDN is contacted. A map is only embedded if one is configured, and then it loads lazily from OpenStreetMap, which receives your IP address when the map loads.', 'site-kit'); ?></p>
+                    <h2><?php esc_html_e('5. WhatsApp', 'site-kit'); ?></h2>
+                    <p><?php esc_html_e('Die WhatsApp-Schaltflächen sind einfache Links. Erst wenn Sie darauf klicken, öffnet sich WhatsApp, ein Dienst der WhatsApp Ireland Ltd. (Meta). Dabei können Daten auch in die USA übertragen werden. Die Nutzung ist freiwillig; alternativ erreichen Sie uns jederzeit per Telefon, E-Mail oder Formular.', 'site-kit'); ?></p>
 
-                    <h2><?php esc_html_e('Your rights', 'site-kit'); ?></h2>
-                    <p><?php esc_html_e('You have the right to information, correction, deletion, restriction of processing, data portability and objection. Contact us at the address above. You may also complain to a data protection authority.', 'site-kit'); ?></p>
+                    <h2><?php esc_html_e('6. Karte (OpenStreetMap)', 'site-kit'); ?></h2>
+                    <p><?php esc_html_e('Auf der Kontaktseite zeigen wir zunächst eine selbst erstellte Grafik unseres Einsatzgebiets. Die interaktive Karte der OpenStreetMap Foundation wird erst geladen, wenn Sie auf „Interaktive Karte laden“ klicken; dabei wird Ihre IP-Adresse an OpenStreetMap übertragen. Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO).', 'site-kit'); ?></p>
+
+                    <h2><?php esc_html_e('7. Cookies, Tracking und Schriftarten', 'site-kit'); ?></h2>
+                    <p><?php esc_html_e('Diese Website setzt keine Tracking- oder Marketing-Cookies und verwendet keine Analysedienste. Schriftarten werden von unserem eigenen Server geladen, nicht von Google oder anderen Anbietern.', 'site-kit'); ?></p>
+
+                    <h2><?php esc_html_e('8. Ihre Rechte', 'site-kit'); ?></h2>
+                    <p><?php esc_html_e('Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch (Art. 15–21 DSGVO). Eine erteilte Einwilligung können Sie jederzeit mit Wirkung für die Zukunft widerrufen. Wenden Sie sich dazu an die oben genannte Adresse.', 'site-kit'); ?></p>
+                    <p><?php esc_html_e('Sie haben außerdem das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren, zum Beispiel bei der Landesbeauftragten für Datenschutz und Informationsfreiheit Nordrhein-Westfalen.', 'site-kit'); ?></p>
                 <?php endif; ?>
             </article>
         </div>

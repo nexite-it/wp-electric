@@ -18,7 +18,7 @@ use SiteKit\Util;
 <main id="content">
     <?php
     Util\page_hero([
-        'eyebrow' => __('Archive', 'site-kit'),
+        'eyebrow' => __('Archiv', 'site-kit'),
         'title'   => wp_strip_all_tags(get_the_archive_title()),
         'lead'    => wp_strip_all_tags((string) get_the_archive_description()),
         'crumbs'  => [['label' => wp_strip_all_tags(get_the_archive_title())]],
@@ -43,8 +43,8 @@ use SiteKit\Util;
             <?php else : ?>
                 <div class="sk-empty reveal">
                     <div class="sk-empty__icon"><?php Util\icon('doc', ''); ?></div>
-                    <h2><?php esc_html_e('Nothing here yet', 'site-kit'); ?></h2>
-                    <p><?php esc_html_e('As soon as something is published in this archive it will appear here.', 'site-kit'); ?></p>
+                    <h2><?php esc_html_e('Noch nichts veröffentlicht', 'site-kit'); ?></h2>
+                    <p><?php esc_html_e('Sobald hier etwas veröffentlicht wird, erscheint es an dieser Stelle.', 'site-kit'); ?></p>
                 </div>
             <?php endif; ?>
         </div>

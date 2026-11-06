@@ -347,6 +347,118 @@ function form_action_url(string $anchor = ''): string
     return $url;
 }
 
+/* -------------------------------------------------------------------------
+ * Local business helpers: phone links, WhatsApp, opening hours
+ * ---------------------------------------------------------------------- */
+
+/**
+ * tel: URL for a German phone number in any notation.
+ *
+ * "0228 123 456-0" → "tel:+492281234560". International numbers ("+49…",
+ * "0049…") are kept; a national number gets the German country code so the
+ * link also works from foreign SIM cards.
+ */
+function tel(string $number): string
+{
+    $digits = preg_replace('/[^\d+]/', '', $number) ?? '';
+
+    if (strpos($digits, '00') === 0) {
+        $digits = '+' . substr($digits, 2);
+    } elseif (strpos($digits, '0') === 0) {
+        $digits = '+49' . substr($digits, 1);
+    }
+
+    return $digits !== '' ? 'tel:' . $digits : '';
+}
+
+/**
+ * wa.me link for the configured WhatsApp number, or '' when none is set.
+ *
+ * @param string $text Prefilled message; defaults to contact.whatsapp_text.
+ */
+function whatsapp_url(string $text = ''): string
+{
+    $contact = \SiteKit\Config\contact();
+    $tel     = tel($contact['whatsapp']);
+
+    if ($tel === '') {
+        return '';
+    }
+
+    $text = $text !== '' ? $text : $contact['whatsapp_text'];
+    $url  = 'https://wa.me/' . ltrim(substr($tel, 4), '+');
+
+    return $text !== '' ? $url . '?text=' . rawurlencode($text) : $url;
+}
+
+/** German short weekday labels, keyed like config.php → hours.week. */
+const DAYS = ['mo' => 'Mo', 'tu' => 'Di', 'we' => 'Mi', 'th' => 'Do', 'fr' => 'Fr', 'sa' => 'Sa', 'su' => 'So'];
+
+/**
+ * Opening hours grouped for display: consecutive days with equal hours share
+ * one row ("Mo – Do 07:00 – 17:00 Uhr").
+ *
+ * @return array<int, array{days: string, time: string, closed: bool}>
+ */
+function hours_rows(): array
+{
+    $week = \SiteKit\Config\hours()['week'];
+    $rows = [];
+    $keys = array_keys(DAYS);
+
+    $i = 0;
+    while ($i < count($keys)) {
+        $slot  = $week[$keys[$i]];
+        $start = $i;
+        while ($i + 1 < count($keys) && $week[$keys[$i + 1]] === $slot) {
+            $i++;
+        }
+
+        $first = DAYS[$keys[$start]];
+        $last  = DAYS[$keys[$i]];
+        $days  = $start === $i ? $first : $first . ($i - $start === 1 ? ', ' : ' – ') . $last;
+
+        $rows[] = [
+            'days'   => $days,
+            'time'   => $slot ? $slot[0] . ' – ' . $slot[1] . ' Uhr' : __('geschlossen', 'site-kit'),
+            'closed' => $slot === null,
+        ];
+        $i++;
+    }
+
+    // A week without any opening hours is "not configured", not "closed".
+    $open = array_filter($rows, static fn(array $row): bool => !$row['closed']);
+
+    return $open ? $rows : [];
+}
+
+/** One-line summary of the open days ("Mo – Do 07:00 – 17:00 Uhr · Fr …"). */
+function hours_summary(): string
+{
+    $parts = [];
+    foreach (hours_rows() as $row) {
+        if (!$row['closed']) {
+            $parts[] = $row['days'] . ' ' . $row['time'];
+        }
+    }
+
+    return implode(' · ', $parts);
+}
+
+/** Opening hours as JSON for the live "jetzt geöffnet" indicator in main.js. */
+function hours_json(): string
+{
+    $hours = \SiteKit\Config\hours();
+
+    return (string) wp_json_encode(['tz' => $hours['timezone'], 'week' => $hours['week']]);
+}
+
+/** Full years since a founding year, e.g. for "28 Jahre Erfahrung". */
+function years_since(int $year): int
+{
+    return $year > 0 ? max(0, (int) current_time('Y') - $year) : 0;
+}
+
 /** Escaped attribute list for <body> classes added by the plugin. */
 function body_class(string $class): void
 {

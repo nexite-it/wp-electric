@@ -1,10 +1,13 @@
 <?php
 /**
- * Template: about page.
+ * Template: Über uns.
  *
- * Uses the page content if the editor wrote some, and falls back to the
- * configured organization description plus the focus areas, so the page is
- * never empty on a fresh install.
+ * Local authority in three blocks: the Meisterbetrieb intro (split screen
+ * with team photo), the three values, and open positions (#karriere).
+ *
+ * Editable without code:
+ *   - page content in the editor replaces the intro paragraphs
+ *   - the page's featured image replaces the team photo placeholder
  */
 
 defined('ABSPATH') || exit;
@@ -13,102 +16,161 @@ use SiteKit\Config;
 use SiteKit\Content;
 use SiteKit\Util;
 
-$intro    = Content\page_intro('about');
-$has_text = trim((string) get_post_field('post_content', get_the_ID())) !== '';
+if (have_posts()) {
+    the_post();
+}
 
-\SiteKit\Template\partial('header', ['page_key' => 'about']);
+$intro    = Content\page_intro('about');
+$about    = Content\about();
+$values   = Content\values();
+$jobs     = Content\jobs();
+$stats    = Content\stats();
+$towns    = array_values(array_filter(array_map('strval', (array) Config\get('service_area', []))));
+$founded  = (int) Config\get('brand.founded', 0);
+$has_text = trim((string) get_post_field('post_content', get_the_ID())) !== '';
+$photo    = has_post_thumbnail() ? (string) get_the_post_thumbnail_url(null, 'large') : Util\img('site/team.svg');
+$apply    = Config\page_url('contact', ['leistung' => 'bewerbung'], 'anfrage');
+$whatsapp = Util\whatsapp_url($jobs['quick_text']);
+
+\SiteKit\Template\partial('header', []);
 ?>
 <main id="content">
     <?php
     Util\page_hero([
         'eyebrow' => $intro['eyebrow'],
-        'title'   => get_the_title() ?: $intro['title'],
+        'title'   => $intro['title'],
         'lead'    => $intro['lead'],
-        'crumbs'  => [['label' => $intro['title']]],
+        'crumbs'  => [['label' => get_the_title() ?: $intro['eyebrow']]],
     ]);
     ?>
 
-    <section class="sk-section">
+    <!-- Meisterbetrieb intro -->
+    <section class="sk-section" aria-labelledby="sk-about-title">
         <div class="sk-wrap">
-            <div class="sk-split">
-                <div class="reveal">
-                    <p class="sk-eyebrow"><?php esc_html_e('Who we are', 'site-kit'); ?></p>
+            <div class="sk-split sk-split--about">
+                <figure class="sk-photo reveal">
+                    <img src="<?php echo esc_url($photo); ?>" alt="<?php echo esc_attr($about['photo_alt']); ?>" width="1200" height="1000" loading="lazy">
+                    <?php if ($founded > 0) : ?>
+                        <figcaption class="sk-photo__badge">
+                            <b><?php echo esc_html(sprintf(__('Seit %d', 'site-kit'), $founded)); ?></b>
+                            <span><?php echo esc_html($about['badge']); ?></span>
+                        </figcaption>
+                    <?php endif; ?>
+                </figure>
+
+                <div class="sk-split__body reveal" data-d="1">
+                    <p class="sk-eyebrow"><?php echo esc_html($about['eyebrow']); ?></p>
+                    <h2 id="sk-about-title"><?php echo esc_html($about['title']); ?></h2>
 
                     <?php if ($has_text) : ?>
-                        <div class="sk-prose">
-                            <?php the_content(); ?>
-                        </div>
+                        <div class="sk-prose"><?php the_content(); ?></div>
                     <?php else : ?>
-                        <h2><?php echo esc_html((string) Config\get('brand.name', '')); ?></h2>
-                        <p class="sk-lead"><?php echo esc_html((string) Config\get('brand.description', '')); ?></p>
-                        <p><?php esc_html_e('Replace this text in the WordPress admin: open this page and write whatever describes your organization best. The layout stays the same.', 'site-kit'); ?></p>
+                        <?php foreach ($about['paragraphs'] as $i => $paragraph) : ?>
+                            <p<?php echo $i === 0 ? ' class="sk-lead"' : ''; ?>><?php echo esc_html($paragraph); ?></p>
+                        <?php endforeach; ?>
                     <?php endif; ?>
 
-                    <div class="sk-actions">
-                        <?php $team = Config\resolve_location('team'); ?>
-                        <?php if ($team !== '') : ?>
-                            <a class="sk-btn sk-btn--primary" href="<?php echo esc_url($team); ?>">
-                                <?php esc_html_e('Meet the team', 'site-kit'); ?>
-                                <?php Util\icon('arrow-right'); ?>
-                            </a>
-                        <?php endif; ?>
-                        <?php $contact = Config\resolve_location('contact'); ?>
-                        <?php if ($contact !== '') : ?>
-                            <a class="sk-btn sk-btn--outline" href="<?php echo esc_url($contact); ?>">
-                                <?php esc_html_e('Get in touch', 'site-kit'); ?>
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                    <p class="sk-signature">
+                        <b><?php echo esc_html($about['signature']); ?></b>
+                        <span><?php echo esc_html($about['role']); ?></span>
+                    </p>
 
-                <div class="sk-split__media reveal" data-d="1">
-                    <img src="<?php echo esc_url(Util\asset('img/site/feature.svg')); ?>"
-                         alt="" loading="lazy" width="1200" height="800">
+                    <?php if ($towns) : ?>
+                        <div class="sk-area">
+                            <p class="sk-label"><?php esc_html_e('Einsatzgebiet', 'site-kit'); ?></p>
+                            <ul class="sk-chips sk-chips--light">
+                                <?php foreach ($towns as $town) : ?>
+                                    <li><?php echo esc_html($town); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
+
+            <dl class="sk-figures sk-figures--row reveal">
+                <?php foreach ($stats as $stat) : ?>
+                    <div class="sk-figure">
+                        <dt><?php echo esc_html($stat['label']); ?></dt>
+                        <dd>
+                            <span data-count="<?php echo esc_attr((string) (int) $stat['num']); ?>"><?php echo esc_html(number_format((int) $stat['num'], 0, ',', '.')); ?></span><?php echo esc_html($stat['suffix']); ?>
+                        </dd>
+                    </div>
+                <?php endforeach; ?>
+            </dl>
         </div>
     </section>
 
-    <section class="sk-section sk-section--tint">
+    <!-- Values -->
+    <section class="sk-section sk-section--tint" aria-labelledby="sk-values-title">
         <div class="sk-wrap">
-            <?php
-            Util\head_row([
-                'eyebrow' => __('How we work', 'site-kit'),
-                'title'   => __('Three principles', 'site-kit'),
-            ]);
-            ?>
-            <div class="sk-grid sk-grid--3">
-                <?php foreach (Content\principles() as $i => $principle) : ?>
-                    <div class="sk-card sk-card--pad reveal" data-d="<?php echo esc_attr((string) $i); ?>">
-                        <div class="sk-card__icon"><?php Util\icon('check', ''); ?></div>
-                        <h3><?php echo esc_html($principle['title']); ?></h3>
-                        <p><?php echo esc_html($principle['text']); ?></p>
-                    </div>
+            <div class="sk-headrow reveal">
+                <div>
+                    <p class="sk-eyebrow"><?php esc_html_e('Unsere Werte', 'site-kit'); ?></p>
+                    <h2 id="sk-values-title"><?php esc_html_e('Worauf Sie sich verlassen können.', 'site-kit'); ?></h2>
+                </div>
+            </div>
+
+            <div class="sk-values">
+                <?php foreach ($values as $i => $value) : ?>
+                    <article class="sk-value reveal" data-d="<?php echo esc_attr((string) $i); ?>">
+                        <div class="sk-value__top">
+                            <span class="sk-value__icon"><?php Util\icon((string) $value['icon'], ''); ?></span>
+                            <span class="sk-value__num"><?php echo esc_html(sprintf('%02d', $i + 1)); ?></span>
+                        </div>
+                        <h3><?php echo esc_html($value['title']); ?></h3>
+                        <p><?php echo esc_html($value['text']); ?></p>
+                    </article>
                 <?php endforeach; ?>
             </div>
         </div>
     </section>
 
-    <section class="sk-section">
-        <div class="sk-wrap">
-            <?php
-            Util\head_row([
-                'eyebrow' => __('Our focus', 'site-kit'),
-                'title'   => __('What we spend our time on', 'site-kit'),
-            ]);
-            ?>
-            <div class="sk-grid sk-grid--2">
-                <?php foreach (Content\pillars() as $i => $pillar) : ?>
-                    <div class="sk-card sk-card--pad sk-pillar-card reveal" data-d="<?php echo esc_attr((string) ($i % 2)); ?>">
-                        <div class="sk-card__icon"><?php Util\icon((string) $pillar['icon'], ''); ?></div>
-                        <h3><?php echo esc_html($pillar['title']); ?></h3>
-                        <ul class="sk-list">
-                            <?php foreach ($pillar['points'] as $point) : ?>
-                                <li><?php echo wp_kses_post($point); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                <?php endforeach; ?>
+    <!-- Careers -->
+    <section class="sk-section" id="karriere" aria-labelledby="sk-career-title">
+        <div class="sk-wrap sk-career">
+            <div class="reveal">
+                <p class="sk-eyebrow"><?php echo esc_html($jobs['eyebrow']); ?></p>
+                <h2 id="sk-career-title"><?php echo esc_html($jobs['title']); ?></h2>
+                <p class="sk-lead"><?php echo esc_html($jobs['text']); ?></p>
+                <ul class="sk-checklist">
+                    <?php foreach ($jobs['benefits'] as $benefit) : ?>
+                        <li><?php Util\icon('check', ''); ?><span><?php echo esc_html($benefit); ?></span></li>
+                    <?php endforeach; ?>
+                </ul>
+                <div class="sk-actions">
+                    <?php if ($apply !== '') : ?>
+                        <a class="sk-btn sk-btn--accent" href="<?php echo esc_url($apply); ?>">
+                            <?php echo esc_html($jobs['apply']); ?>
+                            <?php Util\icon('arrow-right'); ?>
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($whatsapp !== '') : ?>
+                        <a class="sk-btn sk-btn--outline" href="<?php echo esc_url($whatsapp); ?>" rel="noopener" target="_blank">
+                            <?php Util\icon('whatsapp'); ?>
+                            <?php echo esc_html($jobs['quick']); ?>
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="sk-positions reveal" data-d="1">
+                <p class="sk-label"><?php esc_html_e('Offene Stellen', 'site-kit'); ?></p>
+                <ul>
+                    <?php foreach ($jobs['positions'] as $position) : ?>
+                        <li>
+                            <a href="<?php echo esc_url($apply); ?>">
+                                <span class="sk-positions__icon"><?php Util\icon('helmet', ''); ?></span>
+                                <span>
+                                    <b><?php echo esc_html($position['title']); ?></b>
+                                    <small><?php echo esc_html($position['meta']); ?></small>
+                                </span>
+                                <?php Util\icon('arrow-right', ''); ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <p class="sk-positions__note"><?php esc_html_e('Keine passende Stelle dabei? Wir freuen uns auch über Initiativbewerbungen.', 'site-kit'); ?></p>
             </div>
         </div>
     </section>

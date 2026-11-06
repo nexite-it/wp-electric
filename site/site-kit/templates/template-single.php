@@ -15,11 +15,11 @@ while (have_posts()) :
     $item    = get_post();
     $type    = (string) get_post_type($item);
     $archive = (string) get_post_type_archive_link($type);
-    $label   = $type === 'post' ? __('Blog', 'site-kit') : __('News', 'site-kit');
+    $label   = $type === 'post' ? __('Beiträge', 'site-kit') : __('Aktuelles', 'site-kit');
 
     $related = Util\posts($type, 3, ['post__not_in' => [$item->ID]]);
 
-    \SiteKit\Template\partial('header', ['page_key' => 'news']);
+    \SiteKit\Template\partial('header', []);
     ?>
     <main id="content">
         <?php
@@ -48,7 +48,7 @@ while (have_posts()) :
                     <p class="sk-backlink">
                         <a class="sk-btn sk-btn--outline sk-btn--sm" href="<?php echo esc_url($archive); ?>">
                             <?php Util\icon('arrow-left', ''); ?>
-                            <?php echo esc_html(sprintf(__('Back to %s', 'site-kit'), mb_strtolower($label))); ?>
+                            <?php echo esc_html(sprintf(__('Zurück zu %s', 'site-kit'), $label)); ?>
                         </a>
                     </p>
                 <?php endif; ?>
@@ -60,8 +60,8 @@ while (have_posts()) :
                 <div class="sk-wrap">
                     <?php
                     Util\head_row([
-                        'eyebrow' => __('More', 'site-kit'),
-                        'title'   => __('Read next', 'site-kit'),
+                        'eyebrow' => __('Mehr', 'site-kit'),
+                        'title'   => __('Weiterlesen', 'site-kit'),
                     ]);
                     ?>
                     <div class="sk-grid sk-grid--3">

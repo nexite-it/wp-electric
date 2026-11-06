@@ -56,8 +56,11 @@ function all(): array
 /**
  * Recursive array merge where list arrays are replaced, not concatenated.
  *
- * array_replace_recursive() already behaves this way for numeric keys; this
- * wrapper exists to make the intent explicit and easy to change later.
+ * Associative arrays merge key by key, so `['brand' => ['name' => 'X']]`
+ * keeps every other brand default. Lists (pages, nav, footer_nav, field
+ * definitions) are replaced as a whole: array_replace_recursive() would merge
+ * them index by index, so a config with two footer links would silently keep
+ * the third and fourth default link. An empty array means "keep the default".
  *
  * @param array<string, mixed> $base
  * @param array<string, mixed> $override
@@ -65,7 +68,28 @@ function all(): array
  */
 function merge(array $base, array $override): array
 {
-    return array_replace_recursive($base, $override);
+    foreach ($override as $key => $value) {
+        if ($value === [] && array_key_exists($key, $base)) {
+            continue;
+        }
+
+        if (is_array($value) && !is_list($value)
+            && isset($base[$key]) && is_array($base[$key]) && !is_list($base[$key])
+        ) {
+            $base[$key] = merge($base[$key], $value);
+            continue;
+        }
+
+        $base[$key] = $value;
+    }
+
+    return $base;
+}
+
+/** array_is_list() for PHP 8.0: sequential integer keys starting at 0. */
+function is_list(array $array): bool
+{
+    return $array === [] || array_keys($array) === range(0, count($array) - 1);
 }
 
 /**
@@ -128,26 +152,114 @@ function contact(): array
     }
 
     $defaults = [
-        'street'    => '',
-        'city'      => '',
-        'country'   => '',
-        'phone'     => '',
-        'email'     => (string) get_option('admin_email'),
-        'recipient' => (string) get_option('admin_email'),
-        'map'       => '',
-        'map_label' => '',
+        'street'        => '',
+        'city'          => '',
+        'country'       => '',
+        'phone'         => '',
+        'email'         => (string) get_option('admin_email'),
+        'recipient'     => (string) get_option('admin_email'),
+        'whatsapp'      => '',
+        'whatsapp_text' => '',
+        'map'           => '',
+        'map_label'     => '',
     ];
 
     $contact = array_merge($defaults, array_map('strval', (array) get('contact', [])));
 
+    // An empty recipient goes to the site admin, not to the public address:
+    // during setup the public address is often still a placeholder.
     if ($contact['recipient'] === '') {
-        $contact['recipient'] = $contact['email'];
+        $contact['recipient'] = (string) get_option('admin_email');
     }
     if ($contact['email'] === '') {
         $contact['email'] = (string) get_option('admin_email');
     }
 
     return $contact;
+}
+
+/**
+ * Emergency line settings. `enabled` is only true when a phone number exists.
+ *
+ * @return array{enabled: bool, phone: string, label: string, note: string, eta: string}
+ */
+function emergency(): array
+{
+    $raw = (array) get('emergency', []);
+
+    $emergency = [
+        'enabled' => !empty($raw['enabled']),
+        'phone'   => trim((string) ($raw['phone'] ?? '')),
+        'label'   => trim((string) ($raw['label'] ?? '')),
+        'note'    => trim((string) ($raw['note'] ?? '')),
+        'eta'     => trim((string) ($raw['eta'] ?? '')),
+    ];
+
+    $emergency['enabled'] = $emergency['enabled'] && $emergency['phone'] !== '';
+    if ($emergency['label'] === '') {
+        $emergency['label'] = 'Notdienst';
+    }
+
+    return $emergency;
+}
+
+/**
+ * Opening hours as [day => [open, close]] or [day => null] when closed.
+ *
+ * Days are keyed mo…su. Malformed entries count as closed.
+ *
+ * @return array{timezone: string, week: array<string, array{0: string, 1: string}|null>}
+ */
+function hours(): array
+{
+    $raw  = (array) get('hours.week', []);
+    $week = [];
+
+    foreach (['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'] as $day) {
+        $value = trim((string) ($raw[$day] ?? ''));
+        $week[$day] = preg_match('/^(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})$/', $value, $m) ? [$m[1], $m[2]] : null;
+    }
+
+    $timezone = trim((string) get('hours.timezone', 'Europe/Berlin'));
+
+    return [
+        'timezone' => $timezone !== '' ? $timezone : 'Europe/Berlin',
+        'week'     => $week,
+    ];
+}
+
+/**
+ * URL of the page that uses a given template, e.g. page_url('contact').
+ *
+ * Templates link to each other by role instead of by slug, so renaming a
+ * page in config.php never breaks a link.
+ *
+ * @param string               $template Template name without prefix ("contact").
+ * @param array<string, string> $query    Query arguments to append.
+ * @param string               $fragment Anchor without '#'.
+ */
+function page_url(string $template, array $query = [], string $fragment = ''): string
+{
+    $url = '';
+
+    foreach ((array) get('pages', []) as $page) {
+        if (is_array($page) && ($page['template'] ?? '') === $template && !empty($page['slug'])) {
+            $url = resolve_location((string) $page['slug']);
+            break;
+        }
+    }
+
+    if ($url === '') {
+        return '';
+    }
+    if ($query) {
+        $url = add_query_arg(array_map('rawurlencode', $query), $url);
+    }
+    if ($fragment !== '') {
+        $url .= '#' . rawurlencode($fragment);
+    }
+
+    return $url;
 }
 
 /**

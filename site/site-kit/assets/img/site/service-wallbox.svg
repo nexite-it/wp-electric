@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Platzhalter: Wallbox-Installation">
+  <!-- Image placeholder in technical-drawing style. Replace with a real photo
+       (1200×900 px or larger, same aspect ratio). -->
+  <defs>
+    <pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0v40" fill="none" stroke="#fff" stroke-opacity=".05"/></pattern>
+    <pattern id="G" width="200" height="200" patternUnits="userSpaceOnUse"><path d="M200 0H0v200" fill="none" stroke="#fff" stroke-opacity=".09"/></pattern>
+    <radialGradient id="glow" cx="78%" cy="18%" r="60%"><stop offset="0" stop-color="#ff6b1a" stop-opacity=".18"/><stop offset="1" stop-color="#ff6b1a" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="900" fill="#0b1424"/>
+  <rect width="1200" height="900" fill="url(#g)"/>
+  <rect width="1200" height="900" fill="url(#G)"/>
+  <rect width="1200" height="900" fill="url(#glow)"/>
+  <rect x="40" y="40" width="1120" height="820" fill="none" stroke="#fff" stroke-opacity=".2"/>
+  <g fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+    <path d="M80 760H1120" stroke-opacity=".5"/>
+    <path d="M200 140V760" stroke-opacity=".5"/>
+    <path d="M200 760l-30 30M200 700l-30 30M200 640l-30 30M200 580l-30 30M200 520l-30 30M200 460l-30 30M200 400l-30 30M200 340l-30 30M200 280l-30 30M200 220l-30 30M200 160l-30 30" stroke-opacity=".18" stroke-width="2"/>
+    <rect x="236" y="200" width="150" height="230" rx="6"/>
+    <path d="M256 250h110M256 290h110M256 330h110M256 370h110" stroke-opacity=".45" stroke-width="2"/>
+    <path d="M270 236v28M292 236v28M314 236v28M336 236v28" stroke="#ff6b1a" stroke-width="5"/>
+    <text x="236" y="182" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="15" fill="#fff" fill-opacity=".7" stroke="none" letter-spacing="1.5" text-anchor="start">ZÄHLERSCHRANK</text>
+    <path d="M386 300H480V340" stroke="#ff6b1a" stroke-dasharray="10 9"/>
+    <text x="400" y="286" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="13" fill="#ff6b1a" fill-opacity=".9" stroke="none" letter-spacing="1.5" text-anchor="start">ZULEITUNG 5-ADRIG</text>
+    <rect x="470" y="340" width="140" height="200" rx="20"/>
+    <rect x="500" y="372" width="80" height="44" rx="6" stroke-opacity=".6" stroke-width="2"/>
+    <circle cx="540" cy="450" r="9" fill="#ff6b1a" stroke="none"/>
+    <circle cx="540" cy="500" r="20" stroke-opacity=".7"/>
+    <text x="630" y="362" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="16" fill="#fff" fill-opacity=".85" stroke="none" letter-spacing="1.5" text-anchor="start">WALLBOX</text>
+    <text x="630" y="386" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="14" fill="#fff" fill-opacity=".7" stroke="none" letter-spacing="1.5" text-anchor="start">11 kW · TYP 2</text>
+    <text x="630" y="410" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="14" fill="#fff" fill-opacity=".7" stroke="none" letter-spacing="1.5" text-anchor="start">RCD + DC 6 mA</text>
+    <g stroke="#fff" stroke-opacity=".45" stroke-width="1.5">
+      <path d="M440 440V760M430 440h20M430 760h20"/>
+    </g>
+    <text x="426" y="600.0" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="15" fill="#fff" fill-opacity=".7" stroke="none" letter-spacing="1.5" text-anchor="end">≈ 1,20 m</text>
+    <path d="M540 520C540 650 690 690 770 600" stroke="#ff6b1a" stroke-width="5"/>
+    <path d="M684 702L696 640Q712 606 770 596L860 540Q902 516 966 516L1040 520Q1080 526 1096 570L1110 640V702Z"/>
+    <path d="M868 560L900 534H960L960 560ZM982 534L1036 536Q1058 540 1068 560H982Z" stroke-opacity=".6" stroke-width="2"/>
+    <circle cx="790" cy="704" r="50" fill="#0b1424"/>
+    <circle cx="790" cy="704" r="20" stroke-opacity=".5" stroke-width="2"/>
+    <circle cx="1012" cy="704" r="50" fill="#0b1424"/>
+    <circle cx="1012" cy="704" r="20" stroke-opacity=".5" stroke-width="2"/>
+    <rect x="758" y="588" width="22" height="16" rx="3" stroke="#ff6b1a" stroke-width="2.5"/>
+
+  </g>
+  <g font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" fill="#fff">
+    <text x="64" y="84" font-size="18" fill-opacity=".55" letter-spacing="2">ABB. 01</text>
+    <rect x="730" y="768" width="430" height="92" fill="#0b1424" stroke="#fff" stroke-opacity=".3"/>
+    <path d="M730 808h430M840 768v40" stroke="#fff" stroke-opacity=".3"/>
+    <text x="746" y="794" font-size="15" fill-opacity=".6" letter-spacing="1.5">ABB. 01</text>
+    <text x="856" y="794" font-size="15" letter-spacing="1.5">WALLBOX-INSTALLATION</text>
+    <text x="746" y="838" font-size="14" fill="#ff6b1a" letter-spacing="1.5">BILDPLATZHALTER · FOTO EINSETZEN</text>
+  </g>
+</svg>

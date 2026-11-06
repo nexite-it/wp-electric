@@ -149,11 +149,11 @@ function send(array $fields, string $subject, string $reply = ''): bool
     }
 
     $body = sprintf(
-        /* translators: 1: site URL, 2: date */
-        __("New message from %1\$s\n\n%2\$s\n\n(Sent on %3\$s)", 'site-kit'),
+        /* translators: 1: site URL, 2: form fields, 3: date */
+        __("Neue Nachricht über %1\$s\n\n%2\$s\n\n(Gesendet am %3\$s)", 'site-kit'),
         home_url('/'),
         implode("\n", $lines),
-        wp_date('Y-m-d H:i')
+        wp_date('d.m.Y, H:i')
     );
 
     $headers = [];
@@ -164,37 +164,64 @@ function send(array $fields, string $subject, string $reply = ''): bool
     return wp_mail($to, '[' . $sit . '] ' . $subject, $body, $headers);
 }
 
-/** Contact form handler. */
+/**
+ * Project inquiry handler (contact page and [sk_contact_form] shortcode).
+ *
+ * Required: name, a valid e-mail, a message of at least 10 characters and the
+ * privacy consent. The topic must be one of Content\form_topics(); anything
+ * else is filed as "Sonstiges".
+ */
 function handle_contact(): void
 {
-    $error = null;
+    $anchor = 'anfrage';
+    $error  = null;
     if (!guard('sk_contact', $error)) {
-        redirect_back('contact-form', false, $error ?? 'generic');
+        redirect_back($anchor, false, $error ?? 'generic');
     }
 
-    $name    = field('sk_name');
-    $email   = email();
-    $subject = field('sk_subject');
-    $topic   = field('sk_topic');
-    $message = textarea('sk_message');
+    $topics   = \SiteKit\Content\form_topics();
+    $topic    = sanitize_key(field('sk_topic', 40));
+    $topic    = isset($topics[$topic]) ? $topic : 'sonstiges';
+    $name     = field('sk_name');
+    $email    = email();
+    $phone    = field('sk_phone', 40);
+    $location = field('sk_location', 120);
+    $message  = textarea('sk_message');
+    $callback = !empty($_POST['sk_callback']); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified in guard()
+    $consent  = !empty($_POST['sk_consent']); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified in guard()
 
+    if (!$consent) {
+        redirect_back($anchor, false, 'consent');
+    }
     if ($name === '' || !is_email($email) || mb_strlen($message) < 10) {
-        redirect_back('contact-form', false, 'invalid');
+        redirect_back($anchor, false, 'invalid');
     }
+    if ($callback && $phone === '') {
+        redirect_back($anchor, false, 'phone');
+    }
+
+    $label = $topics[$topic]['label'];
 
     $ok = send(
         [
-            __('Name', 'site-kit')    => $name,
-            __('E-mail', 'site-kit')  => $email,
-            __('Topic', 'site-kit')   => $topic,
-            __('Subject', 'site-kit') => $subject,
-            __('Message', 'site-kit') => $message,
+            __('Anliegen', 'site-kit')        => $label,
+            __('Name', 'site-kit')            => $name,
+            __('E-Mail', 'site-kit')          => $email,
+            __('Telefon', 'site-kit')         => $phone,
+            __('Rückruf erwünscht', 'site-kit') => $callback ? __('ja', 'site-kit') : __('nein', 'site-kit'),
+            __('PLZ / Ort', 'site-kit')       => $location,
+            __('Nachricht', 'site-kit')       => "\n" . $message,
         ],
-        sprintf(__('Contact form: %s', 'site-kit'), $subject !== '' ? $subject : __('New message', 'site-kit')),
+        sprintf(
+            /* translators: 1: topic, 2: sender name */
+            __('Anfrage %1$s – %2$s', 'site-kit'),
+            $label,
+            $name
+        ),
         $email
     );
 
-    redirect_back('contact-form', $ok, $ok ? 'sent' : 'failed');
+    redirect_back($anchor, $ok, $ok ? 'sent' : 'failed');
 }
 
 /** Event RSVP handler. */

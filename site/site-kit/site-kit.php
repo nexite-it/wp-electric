@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Site Kit
  * Description: Theme-independent site core: templates, post types, seeding, forms and design system. Shipped by the carrier theme and synced to wp-content/mu-plugins/.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Requires at least: 6.0
  * Requires PHP: 8.0
  * Author: Your Organization
@@ -31,7 +31,7 @@
 
 defined('ABSPATH') || exit;
 
-define('SK_VERSION', '1.0.0');
+define('SK_VERSION', '1.1.0');
 define('SK_DIR', plugin_dir_path(__FILE__));
 define('SK_FILE', __FILE__);
 
